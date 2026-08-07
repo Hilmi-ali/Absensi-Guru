@@ -1,10 +1,16 @@
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
+
 import { db } from "../firebase/config";
 
 export async function getAttendanceHistory(uid) {
+  if (!uid) {
+    return [];
+  }
+
   const q = query(
     collection(db, "attendance"),
     where("uid", "==", uid),
+    where("status", "in", ["hadir", "terlambat"]),
     orderBy("createdAt", "desc"),
   );
 

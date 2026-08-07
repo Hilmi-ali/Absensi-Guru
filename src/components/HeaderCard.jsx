@@ -71,7 +71,7 @@ function HeaderCard({ profile }) {
       <div style={styles.glow} />
       <div style={styles.avatar}>{initials || "🙂"}</div>
       <div style={{ position: "relative", zIndex: 1 }}>
-        <p style={styles.title}>Selamat Datang 👋</p>
+        <p style={styles.title}>Selamat Datang </p>
         <div style={styles.name}>{profile?.nama}</div>
         <div style={styles.role}>{profile?.role}</div>
       </div>

@@ -12,7 +12,7 @@ function DateTimeCard({ clock }) {
       display: "flex",
       alignItems: "center",
       gap: 8,
-      marginBottom: 10,
+      marginBottom: 0,
     },
     title: {
       fontSize: 13,
@@ -22,7 +22,7 @@ function DateTimeCard({ clock }) {
       letterSpacing: "0.4px",
     },
     time: {
-      fontSize: 40,
+      fontSize: 35,
       fontWeight: 700,
       color: "#101828",
       letterSpacing: "-1px",
@@ -38,7 +38,7 @@ function DateTimeCard({ clock }) {
   return (
     <div style={styles.card}>
       <div style={styles.row}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        {/* <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
           <circle cx="12" cy="12" r="9" stroke="#4F6BFF" strokeWidth="1.8" />
           <path
             d="M12 7v5l3.5 2"
@@ -47,7 +47,7 @@ function DateTimeCard({ clock }) {
             strokeLinecap="round"
           />
         </svg>
-        <span style={styles.title}>Jam Sekarang</span>
+        <span style={styles.title}>Jam Sekarang</span> */}
       </div>
       <div style={styles.time}>{clock.currentTime}</div>
       <div style={styles.date}>{clock.currentDate}</div>
