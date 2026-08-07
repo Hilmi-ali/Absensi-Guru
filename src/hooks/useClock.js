@@ -1,39 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
 import { formatDate, formatTime, formatCountdown } from "../utils/time";
-import useSettings from "./useSettings";
+
+const DEVELOPMENT_MODE = true;
 
 function getAttendanceStatus(now, settings) {
   if (!settings) return "loading";
 
   const [openHour, openMinute] = settings.openTime.split(":").map(Number);
-
   const [closeHour, closeMinute] = settings.closeTime.split(":").map(Number);
 
   const totalMinute = now.getHours() * 60 + now.getMinutes();
   const openMinuteTotal = openHour * 60 + openMinute;
   const closeMinuteTotal = closeHour * 60 + closeMinute;
 
-  // ==========================
-  // Untuk Development
-  // ==========================
-  return "open";
+  if (DEVELOPMENT_MODE) {
+    return "open";
+  }
 
-  // ==========================
-  // Aktifkan saat Production
-  // ==========================
+  if (totalMinute < openMinuteTotal) {
+    return "before";
+  }
 
-  // if (totalMinute < openMinuteTotal) {
-  //   return "before";
-  // }
+  if (totalMinute <= closeMinuteTotal) {
+    return "open";
+  }
 
-  // if (
-  //   totalMinute >= openMinuteTotal &&
-  //   totalMinute <= closeMinuteTotal
-  // ) {
-  //   return "open";
-  // }
-
-  // return "after";
+  return "after";
 }
 
 export default function useClock(settings) {

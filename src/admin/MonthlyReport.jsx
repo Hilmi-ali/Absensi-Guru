@@ -16,26 +16,26 @@ function MonthlyReport() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    async function loadReport() {
+      try {
+        setLoading(true);
+
+        const [teacherData, attendanceData] = await Promise.all([
+          getTeachers(),
+          getMonthlyAttendance(year, month),
+        ]);
+
+        setTeachers(teacherData.filter((item) => item.role === "guru"));
+        setAttendance(attendanceData);
+      } catch (error) {
+        console.error("Gagal mengambil rekap:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
     loadReport();
   }, [year, month]);
-
-  async function loadReport() {
-    try {
-      setLoading(true);
-
-      const [teacherData, attendanceData] = await Promise.all([
-        getTeachers(),
-        getMonthlyAttendance(year, month),
-      ]);
-
-      setTeachers(teacherData.filter((item) => item.role === "guru"));
-      setAttendance(attendanceData);
-    } catch (error) {
-      console.error("Gagal mengambil rekap:", error);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   const report = useMemo(() => {
     return teachers.map((teacher) => {
