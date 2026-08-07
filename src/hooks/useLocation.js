@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-
 import { calculateDistance } from "../utils/haversine";
 
-import { SCHOOL } from "../config/constants";
-
-export default function useLocation() {
+export default function useLocation(settings) {
   const [loading, setLoading] = useState(true);
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
@@ -14,6 +11,7 @@ export default function useLocation() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!settings) return;
     if (!navigator.geolocation) {
       setError("Browser tidak mendukung GPS");
 
@@ -32,24 +30,15 @@ export default function useLocation() {
 
         const meter = calculateDistance(
           lat,
-
           lng,
-
-          SCHOOL.latitude,
-
-          SCHOOL.longitude,
+          settings.latitude,
+          settings.longitude,
         );
-
         setLatitude(lat);
-
         setLongitude(lng);
-
         setAccuracy(acc);
-
         setDistance(meter);
-
-        setInsideArea(meter <= SCHOOL.radius);
-
+        setInsideArea(meter <= settings.radius);
         setLoading(false);
       },
 
@@ -71,21 +60,15 @@ export default function useLocation() {
     return () => {
       navigator.geolocation.clearWatch(watchId);
     };
-  }, []);
+  }, [settings]);
 
   return {
     loading,
-
     latitude,
-
     longitude,
-
     distance,
-
     accuracy,
-
     insideArea,
-
     error,
   };
 }

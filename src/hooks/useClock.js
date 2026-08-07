@@ -1,24 +1,42 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { formatDate, formatTime, formatCountdown } from "../utils/time";
-import { ATTENDANCE } from "../config/constants";
+import useSettings from "./useSettings";
 
-function getAttendanceStatus(now) {
-  //Komentar untuk testing
+function getAttendanceStatus(now, settings) {
+  if (!settings) return "loading";
 
-  // const totalMinute = now.getHours() * 60 + now.getMinutes();
-  // const openMinute = ATTENDANCE.openHour * 60 + ATTENDANCE.openMinute;
-  // const closeMinute = ATTENDANCE.closeHour * 60 + ATTENDANCE.closeMinute;
-  // if (totalMinute < openMinute) {
+  const [openHour, openMinute] = settings.openTime.split(":").map(Number);
+
+  const [closeHour, closeMinute] = settings.closeTime.split(":").map(Number);
+
+  const totalMinute = now.getHours() * 60 + now.getMinutes();
+  const openMinuteTotal = openHour * 60 + openMinute;
+  const closeMinuteTotal = closeHour * 60 + closeMinute;
+
+  // ==========================
+  // Untuk Development
+  // ==========================
+  return "open";
+
+  // ==========================
+  // Aktifkan saat Production
+  // ==========================
+
+  // if (totalMinute < openMinuteTotal) {
   //   return "before";
   // }
-  // if (totalMinute >= openMinute && totalMinute <= closeMinute) {
+
+  // if (
+  //   totalMinute >= openMinuteTotal &&
+  //   totalMinute <= closeMinuteTotal
+  // ) {
   //   return "open";
   // }
 
-  return "open";
+  // return "after";
 }
 
-export default function useClock() {
+export default function useClock(settings) {
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -29,18 +47,28 @@ export default function useClock() {
     return () => clearInterval(interval);
   }, []);
 
-  const openTime = new Date(now);
-  openTime.setHours(ATTENDANCE.openHour);
-  openTime.setMinutes(ATTENDANCE.openMinute);
-  openTime.setSeconds(0);
+  const openTime = useMemo(() => {
+    if (!settings) return null;
 
-  const diff = Math.floor((openTime - now) / 1000);
+    const [hour, minute] = settings.openTime.split(":").map(Number);
+
+    const time = new Date(now);
+    time.setHours(hour);
+    time.setMinutes(minute);
+    time.setSeconds(0);
+    time.setMilliseconds(0);
+
+    return time;
+  }, [settings, now]);
+
+  const diff = openTime ? Math.floor((openTime - now) / 1000) : 0;
 
   return {
     now,
+    settings,
     currentTime: formatTime(now),
     currentDate: formatDate(now),
     countdown: formatCountdown(diff),
-    status: getAttendanceStatus(now),
+    status: getAttendanceStatus(now, settings),
   };
 }

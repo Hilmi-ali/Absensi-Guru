@@ -1,4 +1,13 @@
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+} from "firebase/firestore";
 import { db } from "../firebase/config";
 
 function getToday() {
@@ -36,7 +45,7 @@ export async function checkTodayAttendance(uid) {
   }
 }
 
-export async function saveAttendance(data) {
+export async function saveAttendance(data, settings) {
   try {
     const attendanceId = getAttendanceId(data.uid);
     const ref = doc(db, "attendance", attendanceId);
@@ -45,15 +54,29 @@ export async function saveAttendance(data) {
       uid: data.uid,
       nama: data.nama,
       role: data.role,
+
       tanggal: getToday(),
       jam: new Date().toLocaleTimeString("id-ID"),
+
       latitude: data.latitude,
       longitude: data.longitude,
+
       accuracy: data.accuracy,
       distance: Number(data.distance.toFixed(2)),
+
       insideArea: data.insideArea,
+
       status: data.insideArea ? "hadir" : "ditolak",
+
       attempt: !data.insideArea,
+
+      schoolName: settings.schoolName,
+      schoolLatitude: settings.latitude,
+      schoolLongitude: settings.longitude,
+      schoolRadius: settings.radius,
+      openTime: settings.openTime,
+      closeTime: settings.closeTime,
+
       createdAt: serverTimestamp(),
     });
 
@@ -62,4 +85,30 @@ export async function saveAttendance(data) {
     console.log(error);
     return false;
   }
+}
+
+const COLLECTION = "attendance";
+
+export async function getAttendanceHistory() {
+  const q = query(collection(db, COLLECTION), orderBy("createdAt", "desc"));
+
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+}
+
+export async function getMonthlyAttendance(year, month) {
+  const snapshot = await getDocs(collection(db, COLLECTION));
+
+  const prefix = `${year}-${String(month).padStart(2, "0")}`;
+
+  return snapshot.docs
+    .map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+    .filter((item) => item.tanggal?.startsWith(prefix));
 }
