@@ -23,12 +23,13 @@ function Profile() {
 
   const styles = {
     container: {
+      width: "100%",
       maxWidth: 480,
       margin: "0 auto",
       minHeight: "100vh",
       background: "#f3f4f6",
       padding: 20,
-      paddingBottom: 90,
+      paddingBottom: 110,
       boxSizing: "border-box",
     },
     card: {

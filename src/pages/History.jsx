@@ -30,12 +30,13 @@ function History() {
 
   const styles = {
     container: {
+      width: "100%",
       maxWidth: 480,
       margin: "0 auto",
-      padding: 20,
-      paddingBottom: 90,
       minHeight: "100vh",
       background: "#f3f4f6",
+      padding: 20,
+      paddingBottom: 110,
       boxSizing: "border-box",
     },
     title: {
