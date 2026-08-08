@@ -331,7 +331,9 @@ function AttendanceCard({
               Aktifkan lokasi untuk melakukan absensi.
             </div>
           ) : location.insideArea ? (
-            <div style={styles.successBox}>📍 Anda berada di area sekolah.</div>
+            <div style={styles.successBox}>
+              {/* 📍 Anda berada di area sekolah. */}
+            </div>
           ) : (
             <div style={styles.warningBox}>
               {/* ⚠️ Anda berada di luar area sekolah.
