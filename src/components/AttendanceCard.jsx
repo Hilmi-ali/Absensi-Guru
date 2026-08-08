@@ -83,8 +83,8 @@ function AttendanceCard({
     },
 
     successBox: {
-      background: "#EEF2FF",
-      border: "1px solid #C7D2FE",
+      background: "#fff",
+      border: "1px solid #fff",
       color: "#3450E0",
       borderRadius: 14,
       padding: "12px 14px",
@@ -241,7 +241,9 @@ function AttendanceCard({
               Aktifkan lokasi untuk melakukan absensi.
             </div>
           ) : location.insideArea ? (
-            <div style={styles.successBox}>📍 Anda berada di area sekolah.</div>
+            <div style={styles.successBox}>
+              {/* 📍 Anda berada di area sekolah. */}
+            </div>
           ) : (
             <div style={styles.warningBox}>
               {/* ⚠️ Anda berada di luar area sekolah.
