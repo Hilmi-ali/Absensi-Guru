@@ -4,8 +4,8 @@ function LocationCard({ location }) {
   const styles = {
     card: {
       background: "#fff",
-      borderRadius: 22,
-      padding: "20px 22px",
+      borderRadius: 20,
+      padding: "14px 16px",
       marginBottom: 16,
       boxShadow: "0 2px 10px rgba(16,24,40,0.06)",
       border: "1px solid #F0F1F5",
@@ -15,48 +15,52 @@ function LocationCard({ location }) {
       alignItems: "center",
       gap: 10,
       color: "#667085",
-      fontSize: 14,
+      fontSize: 13.5,
     },
     row: {
       display: "flex",
       alignItems: "center",
-      gap: 8,
-      marginBottom: 14,
+      gap: 14,
     },
-    title: {
-      fontSize: 13,
-      fontWeight: 600,
-      color: "#667085",
-      textTransform: "uppercase",
-      letterSpacing: "0.4px",
-    },
-    badge: (ok) => ({
-      display: "inline-flex",
+    preview: (ok) => ({
+      position: "relative",
+      width: 54,
+      height: 54,
+      borderRadius: 14,
+      flexShrink: 0,
+      overflow: "hidden",
+      background: ok
+        ? "linear-gradient(135deg, #E8F0FF 0%, #DCE6FF 100%)"
+        : "linear-gradient(135deg, #FFF1EE 0%, #FFE4DE 100%)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }),
+    previewDot: (ok, top, left) => ({
+      position: "absolute",
+      top,
+      left,
+      width: 3,
+      height: 3,
+      borderRadius: "50%",
+      background: ok ? "#A9BCFF" : "#FFC2B4",
+    }),
+    info: { flex: 1, minWidth: 0 },
+    captionRow: {
+      display: "flex",
       alignItems: "center",
       gap: 6,
-      padding: "6px 12px",
-      borderRadius: 999,
-      fontSize: 13,
-      fontWeight: 600,
-      background: ok ? "#ECFDF3" : "#FEF3F2",
-      color: ok ? "#12B76A" : "#F04438",
-      marginBottom: 14,
-    }),
-    dot: (ok) => ({
-      width: 7,
-      height: 7,
-      borderRadius: "50%",
-      background: ok ? "#12B76A" : "#F04438",
-    }),
-    statsRow: { display: "flex", gap: 12 },
-    stat: {
-      flex: 1,
-      background: "#F9FAFB",
-      borderRadius: 14,
-      padding: "12px 14px",
+      marginBottom: 4,
     },
-    statLabel: { fontSize: 12, color: "#98A2B3", marginBottom: 4 },
-    statValue: { fontSize: 16, fontWeight: 700, color: "#101828" },
+    caption: (ok) => ({
+      fontSize: 13.5,
+      fontWeight: 700,
+      color: ok ? "#2A3FCC" : "#D0402A",
+    }),
+    stats: {
+      fontSize: 12.5,
+      color: "#98A2B3",
+    },
   };
 
   if (loading) {
@@ -84,7 +88,7 @@ function LocationCard({ location }) {
   if (error) {
     return (
       <div style={styles.card}>
-        <div style={{ color: "#F04438", fontSize: 14 }}>{error}</div>
+        <div style={{ color: "#F04438", fontSize: 13.5 }}>{error}</div>
       </div>
     );
   }
@@ -92,30 +96,31 @@ function LocationCard({ location }) {
   return (
     <div style={styles.card}>
       <div style={styles.row}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M12 21s-7-6.2-7-11.5A7 7 0 0112 2a7 7 0 017 7.5C19 14.8 12 21 12 21z"
-            stroke="#4F6BFF"
-            strokeWidth="1.8"
-          />
-          <circle cx="12" cy="9.5" r="2.4" stroke="#4F6BFF" strokeWidth="1.8" />
-        </svg>
-        <span style={styles.title}>Lokasi</span>
-      </div>
-
-      <div style={styles.badge(insideArea)}>
-        <span style={styles.dot(insideArea)} />
-        {insideArea ? "Dalam Area" : "Di Luar Area"}
-      </div>
-
-      <div style={styles.statsRow}>
-        <div style={styles.stat}>
-          <div style={styles.statLabel}>Jarak</div>
-          <div style={styles.statValue}>{distance?.toFixed(1)} meter</div>
+        {/* Preview lokasi kecil (dekoratif) */}
+        <div style={styles.preview(insideArea)}>
+          <div style={styles.previewDot(insideArea, 8, 10)} />
+          <div style={styles.previewDot(insideArea, 14, 34)} />
+          <div style={styles.previewDot(insideArea, 34, 14)} />
+          <div style={styles.previewDot(insideArea, 38, 38)} />
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 21s-7-6.2-7-11.5A7 7 0 0112 2a7 7 0 017 7.5C19 14.8 12 21 12 21z"
+              fill={insideArea ? "#3450E0" : "#F04438"}
+            />
+            <circle cx="12" cy="9.5" r="2.3" fill="#fff" />
+          </svg>
         </div>
-        <div style={styles.stat}>
-          <div style={styles.statLabel}>Akurasi</div>
-          <div style={styles.statValue}>{accuracy?.toFixed(1)} meter</div>
+
+        <div style={styles.info}>
+          <div style={styles.captionRow}>
+            <span style={styles.caption(insideArea)}>
+              {insideArea ? "Dalam area sekolah" : "Di luar area sekolah"}
+            </span>
+          </div>
+          <div style={styles.stats}>
+            Jarak {distance?.toFixed(1)} m &nbsp;•&nbsp; Akurasi{" "}
+            {accuracy?.toFixed(1)} m
+          </div>
         </div>
       </div>
     </div>

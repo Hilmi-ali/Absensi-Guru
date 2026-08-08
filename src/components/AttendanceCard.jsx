@@ -48,13 +48,13 @@ function AttendanceCard({
 
     value: {
       fontSize: 14,
-      fontWeight: 600,
+      fontWeight: 750,
       color: "#101828",
       marginBottom: 14,
     },
 
     countdown: {
-      fontSize: 34,
+      fontSize: 24,
       fontWeight: 700,
       color: "#101828",
       fontVariantNumeric: "tabular-nums",
@@ -72,8 +72,8 @@ function AttendanceCard({
     },
 
     warningBox: {
-      background: "#FFF7ED",
-      border: "1px solid #FED7AA",
+      background: "#FFF",
+      border: "1px solid #FFF",
       color: "#C2410C",
       borderRadius: 14,
       padding: "12px 14px",
@@ -83,9 +83,9 @@ function AttendanceCard({
     },
 
     successBox: {
-      background: "#ECFDF3",
-      border: "1px solid #ABEFC6",
-      color: "#027A48",
+      background: "#EEF2FF",
+      border: "1px solid #C7D2FE",
+      color: "#3450E0",
       borderRadius: 14,
       padding: "12px 14px",
       marginBottom: 16,
@@ -109,13 +109,13 @@ function AttendanceCard({
       padding: 16,
       border: "none",
       borderRadius: 16,
-      background: "linear-gradient(135deg, #17C787 0%, #0F9D63 100%)",
+      background: "linear-gradient(135deg, #263863 0%, #3b5082 100%)",
       color: "#fff",
       fontWeight: 700,
       fontSize: 16,
       letterSpacing: "0.2px",
       cursor: "pointer",
-      boxShadow: "0 10px 20px -8px rgba(15, 157, 99, 0.55)",
+      boxShadow: "0 10px 20px -8px rgba(52, 80, 224, 0.5)",
       transition: "transform 0.15s ease",
     },
 
@@ -141,27 +141,15 @@ function AttendanceCard({
     },
   };
 
-  // ===============================
-  // CEK GPS
-  // ===============================
-
   const hasLocation =
     location?.latitude !== null &&
     location?.latitude !== undefined &&
     location?.longitude !== null &&
     location?.longitude !== undefined;
 
-  // ===============================
-  // CEK SUDAH ABSEN
-  // ===============================
-
   const alreadyAttendance =
     todayAttendance?.status === "hadir" ||
     todayAttendance?.status === "terlambat";
-
-  // ===============================
-  // GPS BELUM TERSEDIA
-  // ===============================
 
   const gpsDisabled = !hasLocation || saving;
 
@@ -177,26 +165,22 @@ function AttendanceCard({
         }
       `}</style>
 
-      {/* =====================================
-          BEFORE
-      ===================================== */}
-
       {clock.status === "before" && (
         <>
           <div style={styles.statusRow}>
-            <div style={styles.statusIcon("#FEF3E2")}>
+            <div style={styles.statusIcon("#EEF2FF")}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <circle
                   cx="12"
                   cy="12"
                   r="9"
-                  stroke="#F59E0B"
+                  stroke="#3450E0"
                   strokeWidth="1.8"
                 />
 
                 <path
                   d="M12 7v5l3 2"
-                  stroke="#F59E0B"
+                  stroke="#3450E0"
                   strokeWidth="1.8"
                   strokeLinecap="round"
                 />
@@ -216,26 +200,22 @@ function AttendanceCard({
         </>
       )}
 
-      {/* =====================================
-          OPEN / NORMAL
-      ===================================== */}
-
       {clock.status === "open" && (
         <>
           <div style={styles.statusRow}>
-            <div style={styles.statusIcon("#E7F7EF")}>
+            <div style={styles.statusIcon("#EEF2FF")}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <circle
                   cx="12"
                   cy="12"
                   r="9"
-                  stroke="#12B76A"
+                  stroke="#3450E0"
                   strokeWidth="1.8"
                 />
 
                 <path
                   d="M8.5 12.5l2.2 2.2L15.5 9.5"
-                  stroke="#12B76A"
+                  stroke="#3450E0"
                   strokeWidth="1.8"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -264,14 +244,12 @@ function AttendanceCard({
             <div style={styles.successBox}>📍 Anda berada di area sekolah.</div>
           ) : (
             <div style={styles.warningBox}>
-              ⚠️ Anda berada di luar area sekolah.
+              {/* ⚠️ Anda berada di luar area sekolah.
               <br />
               Jika tetap menekan tombol, percobaan akan dicatat sebagai{" "}
-              <strong>absen</strong> di sistem admin.
+              <strong>absen</strong> di sistem admin. */}
             </div>
           )}
-
-          {/* Tombol */}
 
           {alreadyAttendance ? (
             <button
@@ -310,11 +288,6 @@ function AttendanceCard({
           )}
         </>
       )}
-
-      {/* =====================================
-          LATE
-      ===================================== */}
-
       {clock.status === "late" && (
         <>
           <div style={styles.statusRow}>
@@ -340,17 +313,13 @@ function AttendanceCard({
             <h3 style={styles.statusTitle}>Absensi Terlambat</h3>
           </div>
 
-          <div style={styles.label}>Batas normal</div>
+          <div style={styles.label}>Batas Absensi</div>
 
           <div style={styles.value}>{settings.closeTime}</div>
 
           <div style={styles.lateBox}>
-            ⚠️ Jam absensi normal sudah berakhir.
-            <br />
-            Anda masih dapat melakukan absensi sampai pukul{" "}
-            <strong>12:00</strong>.
-            <br />
-            Status akan tercatat sebagai <strong>terlambat</strong>.
+            ⚠️ Absensi normal berakhir. <br /> Anda masih dapat absen{" "}
+            <strong>terlambat</strong> hingga <strong>12:00</strong>.
           </div>
 
           {!hasLocation ? (
@@ -363,10 +332,10 @@ function AttendanceCard({
             <div style={styles.successBox}>📍 Anda berada di area sekolah.</div>
           ) : (
             <div style={styles.warningBox}>
-              ⚠️ Anda berada di luar area sekolah.
+              {/* ⚠️ Anda berada di luar area sekolah.
               <br />
               Percobaan akan tetap dicatat di sistem admin, tetapi tidak menjadi
-              absensi guru.
+              absensi guru. */}
             </div>
           )}
 
@@ -407,10 +376,6 @@ function AttendanceCard({
           )}
         </>
       )}
-
-      {/* =====================================
-          CLOSED
-      ===================================== */}
 
       {clock.status === "closed" && (
         <>

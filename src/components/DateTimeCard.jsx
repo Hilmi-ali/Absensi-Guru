@@ -1,55 +1,48 @@
 function DateTimeCard({ clock }) {
   const styles = {
     card: {
-      background: "#ffffff",
-      borderRadius: 22,
-      padding: "20px 22px",
+      position: "relative",
+      zIndex: 2,
+      marginTop: -8,
       marginBottom: 16,
-      boxShadow: "0 2px 10px rgba(16,24,40,0.06)",
+      background: "#ffffff",
+      borderRadius: 24,
+      padding: "14px 20px 16px",
+      boxShadow: "0 16px 34px -18px rgba(16,24,40,0.28)",
       border: "1px solid #F0F1F5",
+      textAlign: "center",
     },
-    row: {
-      display: "flex",
-      alignItems: "center",
-      gap: 8,
-      marginBottom: 0,
-    },
-    title: {
-      fontSize: 13,
+    label: {
+      fontSize: 10,
       fontWeight: 600,
-      color: "#667085",
+      color: "#98A2B3",
       textTransform: "uppercase",
-      letterSpacing: "0.4px",
+      letterSpacing: "0.5px",
+      marginBottom: 10,
     },
-    time: {
-      fontSize: 35,
-      fontWeight: 700,
-      color: "#101828",
-      letterSpacing: "-1px",
+    timeBox: {
+      display: "inline-block",
+      background: "linear-gradient(135deg, #EEF1FF 0%, #c1ccff 100%)",
+      color: "#2e4c93",
+      borderRadius: 18,
+      padding: "10px 18px",
+      fontSize: 27,
+      fontWeight: 800,
+      letterSpacing: "-0.5px",
       fontVariantNumeric: "tabular-nums",
     },
     date: {
-      marginTop: 4,
+      marginTop: 10,
       color: "#667085",
-      fontSize: 14,
+      fontSize: 12,
+      fontWeight: 500,
     },
   };
 
   return (
     <div style={styles.card}>
-      <div style={styles.row}>
-        {/* <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="9" stroke="#4F6BFF" strokeWidth="1.8" />
-          <path
-            d="M12 7v5l3.5 2"
-            stroke="#4F6BFF"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          />
-        </svg>
-        <span style={styles.title}>Jam Sekarang</span> */}
-      </div>
-      <div style={styles.time}>{clock.currentTime}</div>
+      <div style={styles.label}>Waktu Saat Ini</div>
+      <div style={styles.timeBox}>{clock.currentTime}</div>
       <div style={styles.date}>{clock.currentDate}</div>
     </div>
   );
