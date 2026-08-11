@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "../firebase/config";
+import { getDeviceInfo } from "./deviceService";
 
 const COLLECTION = "attendance";
 const ATTEMPT_COLLECTION = "attendance_attempts";
@@ -72,25 +73,36 @@ export async function saveAttendance(data, settings) {
       throw new Error("UID guru tidak ditemukan.");
     }
 
-    const hasLocation =
-      data.latitude !== null &&
-      data.latitude !== undefined &&
-      data.longitude !== null &&
-      data.longitude !== undefined;
-
-    if (!hasLocation) {
+    if (
+      data.latitude === null ||
+      data.latitude === undefined ||
+      data.longitude === null ||
+      data.longitude === undefined
+    ) {
       throw new Error("GPS_REQUIRED");
     }
 
-    if (!settings) {
-      throw new Error("SETTINGS_REQUIRED");
+    const device = getDeviceInfo();
+
+    const attendanceId = getAttendanceId(data.uid);
+
+    const attendanceRef = doc(db, COLLECTION, attendanceId);
+
+    const existingAttendance = await getDoc(attendanceRef);
+
+    if (existingAttendance.exists()) {
+      return {
+        success: false,
+        status: existingAttendance.data().status,
+        alreadyExists: true,
+      };
     }
 
     if (!data.insideArea) {
       await addDoc(collection(db, ATTEMPT_COLLECTION), {
         uid: data.uid,
-        nama: data.nama || "",
-        role: data.role || "guru",
+        nama: data.nama,
+        role: data.role,
 
         tanggal: getToday(),
 
@@ -99,7 +111,7 @@ export async function saveAttendance(data, settings) {
         latitude: data.latitude,
         longitude: data.longitude,
 
-        accuracy: typeof data.accuracy === "number" ? data.accuracy : null,
+        accuracy: data.accuracy,
 
         distance:
           typeof data.distance === "number"
@@ -112,10 +124,9 @@ export async function saveAttendance(data, settings) {
 
         attempt: true,
 
-        // Simpan status waktu saat attempt
-        clockStatus: data.clockStatus || null,
+        device,
 
-        schoolName: settings.schoolName || "",
+        schoolName: settings.schoolName,
         schoolLatitude: settings.latitude,
         schoolLongitude: settings.longitude,
         schoolRadius: settings.radius,
@@ -130,22 +141,7 @@ export async function saveAttendance(data, settings) {
         success: true,
         status: "absen",
         attempt: true,
-      };
-    }
-
-    const attendanceId = getAttendanceId(data.uid);
-
-    const attendanceRef = doc(db, COLLECTION, attendanceId);
-
-    const existingAttendance = await getDoc(attendanceRef);
-
-    if (existingAttendance.exists()) {
-      const existingData = existingAttendance.data();
-
-      return {
-        success: false,
-        status: existingData.status,
-        alreadyExists: true,
+        device,
       };
     }
 
@@ -153,8 +149,8 @@ export async function saveAttendance(data, settings) {
 
     await setDoc(attendanceRef, {
       uid: data.uid,
-      nama: data.nama || "",
-      role: data.role || "guru",
+      nama: data.nama,
+      role: data.role,
 
       tanggal: getToday(),
 
@@ -163,7 +159,7 @@ export async function saveAttendance(data, settings) {
       latitude: data.latitude,
       longitude: data.longitude,
 
-      accuracy: typeof data.accuracy === "number" ? data.accuracy : null,
+      accuracy: data.accuracy,
 
       distance:
         typeof data.distance === "number"
@@ -176,9 +172,9 @@ export async function saveAttendance(data, settings) {
 
       attempt: false,
 
-      clockStatus: data.clockStatus || null,
+      device,
 
-      schoolName: settings.schoolName || "",
+      schoolName: settings.schoolName,
       schoolLatitude: settings.latitude,
       schoolLongitude: settings.longitude,
       schoolRadius: settings.radius,
@@ -193,6 +189,7 @@ export async function saveAttendance(data, settings) {
       success: true,
       status,
       attempt: false,
+      device,
     };
   } catch (error) {
     console.error("Gagal menyimpan absensi:", error);
@@ -222,13 +219,10 @@ export async function getAttendanceHistory() {
       getDocs(attemptQuery),
     ]);
 
-    // ========================================================
-    // ABSENSI RESMI
-    // ========================================================
-
     const attendanceData = attendanceSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
+
       source: "attendance",
     }));
 
@@ -243,6 +237,7 @@ export async function getAttendanceHistory() {
 
     return [...attendanceData, ...attemptData].sort((a, b) => {
       const timeA = a.createdAt?.seconds || 0;
+
       const timeB = b.createdAt?.seconds || 0;
 
       return timeB - timeA;

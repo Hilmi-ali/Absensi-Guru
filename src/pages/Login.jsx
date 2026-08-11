@@ -35,21 +35,21 @@ function Login() {
         "0 1px 2px rgba(16,24,40,0.04), 0 20px 40px -12px rgba(16,24,40,0.12)",
     },
     logo: {
-      width: 60,
-      height: 60,
-      borderRadius: 18,
+      width: 75,
+      height: 75,
+      borderRadius: 17,
       margin: "0 auto 20px",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      background: "linear-gradient(135deg, #4F6BFF 0%, #3450E0 100%)",
-      boxShadow: "0 8px 20px -6px rgba(63, 91, 245, 0.55)",
+      background: "linear-gradient(135deg, #FFF 70%, #fffac6 100%)",
+      boxShadow: "0 8px 20px -6px rgba(90, 90, 90, 0.55)",
     },
     title: {
       margin: 0,
       textAlign: "center",
       fontSize: 22,
-      fontWeight: 700,
+      fontWeight: 800,
       color: "#101828",
       letterSpacing: "-0.3px",
     },
@@ -57,7 +57,8 @@ function Login() {
       margin: "6px 0 28px",
       textAlign: "center",
       fontSize: 14,
-      color: "#667085",
+      fontWeight: 600,
+      color: "#0d2b6c",
     },
     field: { marginBottom: 14 },
     inputWrap: {
@@ -149,27 +150,15 @@ function Login() {
 
       <div style={styles.card}>
         <div style={styles.logo}>
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M9 12.5l2 2 4-4.5"
-              stroke="#fff"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <circle
-              cx="12"
-              cy="12"
-              r="9"
-              stroke="#fff"
-              strokeWidth="2"
-              opacity="0.5"
-            />
-          </svg>
+          <img
+            src="/dipoLogo.png"
+            alt="Logo"
+            style={{ width: 62, height: 62, objectFit: "contain" }}
+          />
         </div>
 
-        <h2 style={styles.title}>Selamat Datang</h2>
-        <p style={styles.subtitle}>Masuk untuk melanjutkan absensi</p>
+        <h2 style={styles.title}>LOGIN</h2>
+        <p style={styles.subtitle}>Absensi Guru</p>
 
         <div style={styles.field}>
           <div style={styles.inputWrap}>

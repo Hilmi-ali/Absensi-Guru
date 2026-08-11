@@ -10,11 +10,12 @@ import LocationCard from "../components/LocationCard";
 import AttendanceCard from "../components/AttendanceCard";
 import BottomNav from "../components/BottomNav";
 // import AppToast from "../components/AppToast";
-
 import {
   checkTodayAttendance,
   saveAttendance,
 } from "../services/attendanceService";
+
+import { getDeviceInfo } from "../services/deviceService";
 
 function Home() {
   const { profile } = useAuth();
@@ -114,6 +115,7 @@ function Home() {
     setSaving(true);
 
     try {
+      const device = getDeviceInfo();
       const result = await saveAttendance(
         {
           uid: profile.uid,
@@ -129,6 +131,7 @@ function Home() {
           insideArea: location.insideArea,
 
           clockStatus: clock.status,
+          device,
         },
         settings,
       );

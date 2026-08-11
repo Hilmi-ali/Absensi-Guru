@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import AdminLayout from "../components/AdminLayout";
 import { getAttendanceHistory } from "../services/attendanceService";
 
@@ -29,10 +29,6 @@ function AttendanceHistory() {
     loadData();
   }, []);
 
-  // ===============================
-  // FILTER
-  // ===============================
-
   const filtered = attendance.filter((item) => {
     const matchName = item.nama?.toLowerCase().includes(search.toLowerCase());
 
@@ -43,9 +39,50 @@ function AttendanceHistory() {
     return matchName && matchStatus && matchDate;
   });
 
-  // ===============================
-  // STYLE
-  // ===============================
+  const deviceUsage = useMemo(() => {
+    const devices = {};
+
+    attendance.forEach((item) => {
+      const deviceId = item.device?.deviceId;
+
+      if (!deviceId || !item.uid) return;
+
+      if (!devices[deviceId]) {
+        devices[deviceId] = {
+          deviceId,
+          model: item.device?.model || "Perangkat tidak diketahui",
+          accounts: new Map(),
+        };
+      }
+
+      devices[deviceId].accounts.set(item.uid, {
+        uid: item.uid,
+        nama: item.nama || "Guru tidak diketahui",
+      });
+    });
+
+    return devices;
+  }, [attendance]);
+
+  function getDeviceUsage(item) {
+    const deviceId = item.device?.deviceId;
+
+    if (!deviceId) {
+      return null;
+    }
+
+    const device = deviceUsage[deviceId];
+
+    if (!device) {
+      return null;
+    }
+
+    return {
+      ...device,
+      accountCount: device.accounts.size,
+      accounts: Array.from(device.accounts.values()),
+    };
+  }
 
   const styles = {
     top: {
@@ -123,11 +160,38 @@ function AttendanceHistory() {
       color: "#667085",
       marginTop: 4,
     },
-  };
+    device: {
+      fontSize: 12.5,
+      color: "#475467",
+      lineHeight: 1.5,
+    },
 
-  // ===============================
-  // STATUS BADGE
-  // ===============================
+    deviceWarning: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 5,
+      marginTop: 5,
+      padding: "4px 8px",
+      borderRadius: 7,
+      background: "#FEF3F2",
+      color: "#B42318",
+      fontSize: 11.5,
+      fontWeight: 600,
+    },
+
+    deviceNormal: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 5,
+      marginTop: 5,
+      padding: "4px 8px",
+      borderRadius: 7,
+      background: "#F2F4F7",
+      color: "#475467",
+      fontSize: 11.5,
+      fontWeight: 500,
+    },
+  };
 
   function renderStatus(item) {
     if (item.status === "hadir") {
@@ -216,15 +280,11 @@ function AttendanceHistory() {
             <thead>
               <tr>
                 <th style={styles.th}>Tanggal</th>
-
                 <th style={styles.th}>Jam</th>
-
                 <th style={styles.th}>Guru</th>
-
                 <th style={styles.th}>Status</th>
-
                 <th style={styles.th}>Jarak</th>
-
+                <th style={styles.th}>Device</th>
                 <th style={styles.th}>Keterangan</th>
               </tr>
             </thead>
@@ -232,32 +292,57 @@ function AttendanceHistory() {
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td style={styles.empty} colSpan="6">
+                  <td style={styles.empty} colSpan="7">
                     Tidak ada data absensi.
                   </td>
                 </tr>
               ) : (
-                filtered.map((item) => (
-                  <tr key={`${item.source}_${item.id}`}>
-                    <td style={styles.td}>{item.tanggal || "-"}</td>
+                filtered.map((item) => {
+                  const device = getDeviceUsage(item);
 
-                    <td style={styles.td}>{item.jam || "-"}</td>
+                  return (
+                    <tr key={`${item.source}_${item.id}`}>
+                      <td style={styles.td}>{item.tanggal || "-"}</td>
 
-                    <td style={styles.td}>{item.nama || "-"}</td>
+                      <td style={styles.td}>{item.jam || "-"}</td>
 
-                    <td style={styles.td}>{renderStatus(item)}</td>
+                      <td style={styles.td}>{item.nama || "-"}</td>
 
-                    <td style={styles.td}>{item.distance ?? "-"} m</td>
+                      <td style={styles.td}>{renderStatus(item)}</td>
 
-                    <td style={styles.td}>
-                      {item.status === "absen"
-                        ? "Percobaan di luar area sekolah"
-                        : item.status === "terlambat"
-                          ? "Absensi setelah jam normal"
-                          : "Absensi normal"}
-                    </td>
-                  </tr>
-                ))
+                      <td style={styles.td}>{item.distance ?? "-"} m</td>
+
+                      <td style={styles.td}>
+                        {item.device ? (
+                          <div style={styles.device}>
+                            <div>
+                              📱{" "}
+                              {item.device.model || "Perangkat tidak diketahui"}
+                            </div>
+
+                            {device?.accountCount > 1 ? (
+                              <div style={styles.deviceWarning}>
+                                ⚠ Digunakan {device.accountCount} akun
+                              </div>
+                            ) : (
+                              <div style={styles.deviceNormal}>✓ 1 akun</div>
+                            )}
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+
+                      <td style={styles.td}>
+                        {item.status === "absen"
+                          ? "Percobaan di luar area sekolah"
+                          : item.status === "terlambat"
+                            ? "Absensi setelah jam normal"
+                            : "Absensi normal"}
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

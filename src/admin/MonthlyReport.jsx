@@ -179,7 +179,7 @@ function MonthlyReport() {
         </div>
 
         <div style={styles.card}>
-          <div style={styles.cardTitle}>Percobaan Ditolak</div>
+          <div style={styles.cardTitle}>Percobaan Absen</div>
           <div style={styles.number}>{totalDitolak}</div>
         </div>
       </div>
@@ -195,7 +195,7 @@ function MonthlyReport() {
                 <th style={styles.th}>Nama Guru</th>
                 <th style={styles.th}>NIP</th>
                 <th style={styles.th}>Hadir</th>
-                <th style={styles.th}>Ditolak</th>
+                <th style={styles.th}>Absen</th>
                 <th style={styles.th}>Total Absensi</th>
               </tr>
             </thead>

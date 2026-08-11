@@ -48,7 +48,16 @@ function History() {
       margin: "0 0 20px",
       color: "#101828",
     },
-
+    device: {
+      marginTop: 10,
+      padding: "9px 11px",
+      background: "#F8FAFC",
+      border: "1px solid #E2E8F0",
+      borderRadius: 10,
+      color: "#475569",
+      fontSize: 12.5,
+      lineHeight: 1.5,
+    },
     card: {
       background: "#fff",
       borderRadius: 16,
@@ -146,7 +155,11 @@ function History() {
               <p style={styles.info}>🕐 Jam : {item.jam || "-"}</p>
 
               <p style={styles.info}>📍 Jarak : {item.distance ?? "-"} meter</p>
-
+              {item.device && (
+                <div style={styles.device}>
+                  📱 {item.device.model || "Perangkat tidak diketahui"}
+                </div>
+              )}
               {terlambat && (
                 <p
                   style={{
