@@ -13,9 +13,9 @@ function DateTimeCard({ clock }) {
       textAlign: "center",
     },
     label: {
-      fontSize: 10,
-      fontWeight: 600,
-      color: "#98A2B3",
+      fontSize: 13.5,
+      fontWeight: 700,
+      color: "#1E2A47",
       textTransform: "uppercase",
       letterSpacing: "0.5px",
       marginBottom: 10,
@@ -26,7 +26,7 @@ function DateTimeCard({ clock }) {
       color: "#2e4c93",
       borderRadius: 18,
       padding: "10px 18px",
-      fontSize: 27,
+      fontSize: 22,
       fontWeight: 800,
       letterSpacing: "-0.5px",
       fontVariantNumeric: "tabular-nums",
@@ -41,7 +41,7 @@ function DateTimeCard({ clock }) {
 
   return (
     <div style={styles.card}>
-      <div style={styles.label}>Waktu Saat Ini</div>
+      <div style={styles.label}>ABSENSI</div>
       <div style={styles.timeBox}>{clock.currentTime}</div>
       <div style={styles.date}>{clock.currentDate}</div>
     </div>

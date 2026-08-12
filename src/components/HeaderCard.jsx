@@ -86,7 +86,7 @@ function HeaderCard({ profile }) {
       width: 68,
       height: 2.5,
       borderRadius: 2,
-      background: "#E8A33D",
+      background: "#1E2A47",
       marginBottom: 4,
     },
     eyebrow: {
@@ -130,7 +130,7 @@ function HeaderCard({ profile }) {
         </div>
       </div>
 
-      <div style={styles.eyebrow}>Absensi</div>
+      <div style={styles.eyebrow}></div>
       <div style={styles.divider} />
     </div>
   );

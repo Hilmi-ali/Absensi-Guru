@@ -274,6 +274,17 @@ function Home() {
       fontFamily:
         '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     },
+
+    // Header + jam tidak ikut discroll - menempel di atas
+    stickyTop: {
+      position: "sticky",
+      top: 0,
+      zIndex: 40,
+      background: "#F5F6FA",
+      paddingTop: 4,
+      paddingBottom: 6,
+      marginTop: -4,
+    },
   };
   function getToastStyle(type) {
     if (type === "success") {
@@ -310,9 +321,10 @@ function Home() {
 
   return (
     <div style={styles.container}>
-      <HeaderCard profile={profile} />
-
-      <DateTimeCard clock={clock} />
+      <div style={styles.stickyTop}>
+        <HeaderCard profile={profile} />
+        <DateTimeCard clock={clock} />
+      </div>
 
       <LocationCard location={location} />
 

@@ -54,7 +54,7 @@ function AttendanceCard({
     },
 
     countdown: {
-      fontSize: 24,
+      fontSize: 18,
       fontWeight: 700,
       color: "#101828",
       fontVariantNumeric: "tabular-nums",

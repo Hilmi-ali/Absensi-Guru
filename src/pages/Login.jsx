@@ -6,10 +6,26 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase/config";
 
+import AppToast from "../components/AppToast";
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  function showToast(type, title, message) {
+    setToast({
+      id: Date.now(),
+      type,
+      title,
+      message,
+    });
+
+    setTimeout(() => {
+      setToast(null);
+    }, 3500);
+  }
 
   const styles = {
     page: {
@@ -109,21 +125,88 @@ function Login() {
   async function handleLogin() {
     if (loading) return;
 
+    if (!email.trim()) {
+      showToast(
+        "warning",
+        "Email belum diisi",
+        "Masukkan email untuk melanjutkan.",
+      );
+      return;
+    }
+
+    if (!password) {
+      showToast(
+        "warning",
+        "Password belum diisi",
+        "Masukkan password untuk melanjutkan.",
+      );
+      return;
+    }
+
     try {
       setLoading(true);
 
       await setPersistence(auth, browserLocalPersistence);
 
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email.trim(), password);
     } catch (error) {
-      alert(error.message);
+      console.error("Login gagal:", error);
+
+      let title = "Login gagal";
+      let message = "Email atau password tidak sesuai.";
+
+      switch (error.code) {
+        case "auth/invalid-email":
+          title = "Email tidak valid";
+          message = "Periksa kembali format email yang Anda masukkan.";
+          break;
+
+        case "auth/invalid-credential":
+        case "auth/wrong-password":
+        case "auth/user-not-found":
+          title = "Login gagal";
+          message = "Email atau password tidak sesuai.";
+          break;
+
+        case "auth/user-disabled":
+          title = "Akun dinonaktifkan";
+          message =
+            "Akun Anda sedang dinonaktifkan. Silakan hubungi administrator.";
+          break;
+
+        case "auth/too-many-requests":
+          title = "Terlalu banyak percobaan";
+          message =
+            "Terlalu banyak percobaan login. Silakan coba lagi beberapa saat.";
+          break;
+
+        case "auth/network-request-failed":
+          title = "Koneksi bermasalah";
+          message =
+            "Tidak dapat terhubung ke server. Periksa koneksi internet Anda.";
+          break;
+
+        case "auth/operation-not-allowed":
+          title = "Login tidak tersedia";
+          message =
+            "Metode login belum tersedia. Silakan hubungi administrator.";
+          break;
+
+        default:
+          title = "Login gagal";
+          message =
+            "Terjadi masalah saat login. Silakan periksa data Anda dan coba lagi.";
+          break;
+      }
+
+      showToast("error", title, message);
     } finally {
       setLoading(false);
     }
   }
-
   return (
     <div style={styles.page}>
+      <AppToast toast={toast} onClose={() => setToast(null)} />
       <style>{`
         .app-input:focus {
           border-color: #4F6BFF !important;
