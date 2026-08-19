@@ -16,6 +16,7 @@ export async function getTeachers() {
 
   return snapshot.docs.map((doc) => ({
     id: doc.id,
+    uid: doc.id, // ID dokumen = Auth UID guru (dibuat saat akun Auth dibuat)
     ...doc.data(),
   }));
 }

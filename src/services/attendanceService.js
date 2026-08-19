@@ -250,14 +250,33 @@ export async function getAttendanceHistory() {
 }
 
 export async function getMonthlyAttendance(year, month) {
-  const snapshot = await getDocs(collection(db, COLLECTION));
+  try {
+    const prefix = `${year}-${String(month).padStart(2, "0")}`;
 
-  const prefix = `${year}-${String(month).padStart(2, "0")}`;
+    const attendanceSnapshot = await getDocs(collection(db, COLLECTION));
 
-  return snapshot.docs
-    .map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }))
-    .filter((item) => item.tanggal?.startsWith(prefix));
+    const attemptSnapshot = await getDocs(collection(db, ATTEMPT_COLLECTION));
+
+    const attendanceData = attendanceSnapshot.docs
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        source: "attendance",
+      }))
+      .filter((item) => item.tanggal && item.tanggal.startsWith(prefix));
+
+    const attemptData = attemptSnapshot.docs
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        source: "attendance_attempts",
+      }))
+      .filter((item) => item.tanggal && item.tanggal.startsWith(prefix));
+
+    return [...attendanceData, ...attemptData];
+  } catch (error) {
+    console.error("Gagal mengambil rekap bulanan:", error);
+
+    return [];
+  }
 }
